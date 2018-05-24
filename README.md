@@ -1,2 +1,1 @@
-# EasyForm
-An rxjs based form library for react
+# Just playing with setting up an rxjs based form library for react - just for my own projects at this stage 
