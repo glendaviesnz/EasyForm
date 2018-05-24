@@ -8,13 +8,14 @@ class UserDetails extends React.Component {
 
   render() {
     return <EasyForm>
-      <input name="firstName" />
+      <label>first name<input name="firstName" /><div><input name="lastName" /><div><input name="oldName" /></div></div></label>
       <input name="lastName" />
       <textarea></textarea>
       <input type="checkbox" />
       <button>Submit</button>
       <div> test </div>
     </EasyForm>;
+
   }
 
 }
