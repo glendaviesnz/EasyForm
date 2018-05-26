@@ -30,25 +30,6 @@ class EasyForm extends React.Component {
   render() {
     const { children } = this.props;
     const childrenWithProps = this.addRefsToChildren(children);
-    console.log(childrenWithProps)
-    // const childrenWithProps = React.Children.map(children, child => {
-    //   let childPropsChildren;
-      
-    //   if (child.props.children && child.props.children.length > 0 ) {
-    //     childPropsChildren = this.addRefsToChildren(child.props.children);
-    //   }
-
-    //   if (this.fieldTypes.includes(child.type)) {
-    //     const ref = React.createRef();
-    //     this.fieldRefs.push({ref, props: child.props});
-    //     return React.cloneElement(child, {ref}, childPropsChildren);
-    //   } else  if (child.type) {
-    //     return React.cloneElement(child, {}, childPropsChildren );
-    //   } else {
-    //     return child;
-    //   }
-
-    // });
 
     return <div>{childrenWithProps}</div>;
   }
