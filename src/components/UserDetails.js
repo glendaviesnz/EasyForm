@@ -5,9 +5,11 @@ import EasyForm from './EasyForm';
 
 class UserDetails extends React.Component {
   ref = React.createRef();
-
+  onSubmit(formData) {
+      formData.subscribe(data => console.log(data));
+  }
   render() {
-    return <EasyForm>
+    return <EasyForm onSubmit={(data) => this.onSubmit(data)}>
       <label>
         First name
         <input name="firstName" />
@@ -19,9 +21,7 @@ class UserDetails extends React.Component {
       <input type="checkbox" name="newsletterSub" />
       <button type="submit">Submit</button>
     </EasyForm>;
-
   }
-
 }
 
 export default UserDetails;
