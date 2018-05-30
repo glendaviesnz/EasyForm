@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import EasyForm from './EasyForm';
 
 class UserDetails extends React.Component {
@@ -18,7 +17,12 @@ class UserDetails extends React.Component {
         Last name
         <input name="lastName" />
       </label>
+      <input type="radio" name="test" value="sister" />
+      <input type="radio" name="test" value="mum"/>
+      <input type="radio" name="test" value="dad" />
       <input type="checkbox" name="newsletterSub" />
+
+      
       <button type="submit">Submit</button>
     </EasyForm>;
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReplaySubject, fromEvent, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take, startWith } from 'rxjs/operators';
 
 class EasyForm extends React.Component {
   fieldRefs = []
@@ -8,16 +8,19 @@ class EasyForm extends React.Component {
   fieldObservables = [];
 
   submitForm() {
+    const formValues = {};
     this.props.onSubmit(
       combineLatest(this.fieldObservables, (...fieldValues) => { 
-        const formValues = {};
         fieldValues.forEach((field) => {
-          formValues[field.name] = field.value;
-        })
+          if (!formValues[field.name] || formValues[field.name] === undefined) {
+              formValues[field.name] = field.value;
+          } 
+        });
         return formValues;
-      })
+      }).pipe(take(1))
     );
   }
+
   addRefsToChildren(children) {
     let childPropsChildren;
 
@@ -57,9 +60,9 @@ class EasyForm extends React.Component {
   componentDidMount() {
 
     this.fieldRefs.forEach((element) => {
-      const replay = new ReplaySubject();
+      const replay = new ReplaySubject(1);
       fromEvent(element.ref.current, 'blur')
-        .pipe(
+        .pipe(startWith({target:{}}),
           map((data) => {
             if (element.props.type === 'checkbox') {
               return { name: element.props.name, value: data.target.checked };
