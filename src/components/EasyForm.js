@@ -1,6 +1,4 @@
 import React from 'react';
-import { ReplaySubject, fromEvent, combineLatest } from 'rxjs';
-import { map, take, startWith } from 'rxjs/operators';
 
 class EasyForm extends React.Component {
   fieldRefs = []
@@ -9,16 +7,18 @@ class EasyForm extends React.Component {
 
   submitForm() {
     const formValues = {};
-    this.props.onSubmit(
-      combineLatest(this.fieldObservables, (...fieldValues) => { 
-        fieldValues.forEach((field) => {
-          if (!formValues[field.name] || formValues[field.name] === undefined) {
-              formValues[field.name] = field.value;
-          } 
-        });
-        return formValues;
-      }).pipe(take(1))
-    );
+    this.fieldRefs.forEach((element) => {
+      if (element.props.type === 'radio') {
+        if (element.ref.current.checked) {
+          formValues[element.props.name] = element.ref.current.value;
+        }
+      } else if (element.props.type === 'checkbox') {
+        formValues[element.props.name] = element.ref.current.checked;
+      } else {
+        formValues[element.props.name] = element.ref.current.value;
+      }
+    });
+    this.props.onSubmit(formValues);
   }
 
   addRefsToChildren(children) {
@@ -40,7 +40,7 @@ class EasyForm extends React.Component {
           this.fieldRefs.push({ ref, props: child.props });
           return React.cloneElement(child, { ref }, childPropsChildren);
         }
- 
+
       } else if (child.type) {
         return React.cloneElement(child, {}, childPropsChildren);
       } else {
@@ -57,24 +57,25 @@ class EasyForm extends React.Component {
     return <div>{childrenWithProps}</div>;
   }
 
-  componentDidMount() {
+  // componentDidMount() {
 
-    this.fieldRefs.forEach((element) => {
-      const replay = new ReplaySubject(1);
-      fromEvent(element.ref.current, 'blur')
-        .pipe(startWith({target:{}}),
-          map((data) => {
-            if (element.props.type === 'checkbox') {
-              return { name: element.props.name, value: data.target.checked };
-            } else {
-              return { name: element.props.name, value: data.target.value };
-            }
-          })
-        ).subscribe(replay);
-      this.fieldObservables.push(replay);
-    });
+  //   this.fieldRefs.forEach((element) => {
+  //     const replay = new ReplaySubject(1);
+  //     fromEvent(element.ref.current, 'blur')
+  //       .pipe(startWith({ target: {} }),
+  //         map((data) => {
+  //           if (element.props.type === 'checkbox') {
+  //             return { name: element.props.name, value: data.target.checked };
+  //           } else {
+  //             return { name: element.props.name, value: data.target.value };
+  //           }
+  //         })
+  //       ).subscribe(replay);
+  //     this.fieldObservables.push(replay);
+  //   });
 
-  }
+  // }
+
 }
 
 export default EasyForm;

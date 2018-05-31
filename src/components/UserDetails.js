@@ -5,7 +5,7 @@ import EasyForm from './EasyForm';
 class UserDetails extends React.Component {
   ref = React.createRef();
   onSubmit(formData) {
-      formData.subscribe(data => console.log(data));
+      console.log(formData);
   }
   render() {
     return <EasyForm onSubmit={(data) => this.onSubmit(data)}>
@@ -21,8 +21,6 @@ class UserDetails extends React.Component {
       <input type="radio" name="test" value="mum"/>
       <input type="radio" name="test" value="dad" />
       <input type="checkbox" name="newsletterSub" />
-
-      
       <button type="submit">Submit</button>
     </EasyForm>;
   }
