@@ -7,7 +7,8 @@ class EasyForm extends React.Component {
   fieldTypes = ['input', 'button', 'textarea', 'select'];
   fieldObservables = [];
   state = {
-    invalid: false
+    invalid: false,
+    invalidFields: {}
   }
 
   render() {
@@ -40,7 +41,7 @@ class EasyForm extends React.Component {
             this.fieldRefs.push({ validation, ref, props: child.props, type: child.type });
             return React.createElement('div', null,
               newChild,
-              React.createElement(ValidationError, { invalid: this.state.invalid }, null));
+              React.createElement(ValidationError, { invalid: this.state.invalidFields[child.props.name] }, null));
               
           }
           this.fieldRefs.push({ validation, ref, props: child.props, type: child.type });
@@ -61,8 +62,9 @@ class EasyForm extends React.Component {
   }
 
   submitForm() {
-    if (!this.validate()) {
-      this.setState({ invalid: true });
+    const validation = this.validate();
+    if (!validation.valid) {
+      this.setState({ invalid: true, invalidFields: validation.invalidFields });
     } else {
       const formValues = {};
       this.fieldRefs.forEach((element) => {
@@ -84,15 +86,17 @@ class EasyForm extends React.Component {
   
   validate() {
     let valid = true;
+    const invalidFields = {};
     this.fieldRefs.filter(field => {
       return Boolean(field.validation)
     }).forEach(field => {
         if (!field.ref.current.value || field.ref.current.value.trim() === '') {
           valid = false;
+          invalidFields[field.props.name] = true;
         }
     })
 
-    return valid;
+    return {valid, invalidFields};
   }
   processSelect(element) {
     if (element.props.multiple) {
