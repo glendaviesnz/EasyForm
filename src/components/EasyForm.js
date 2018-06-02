@@ -21,33 +21,13 @@ class EasyForm extends React.Component {
   addRefsToChildren(children) {
     let childPropsChildren;
     const newChildren = React.Children.map(children, child => {
-
-      let onClick;
       if (child.props && child.props.children) {
         childPropsChildren = this.addRefsToChildren(child.props.children);
       } else {
         childPropsChildren = null;
       }
       if (this.fieldTypes.includes(child.type)) {
-        if (child.type === 'button') {
-          onClick = this.submitForm.bind(this);
-          return React.cloneElement(child, { onClick }, childPropsChildren);
-        } else {
-          const ref = React.createRef();
-          const newChild = React.cloneElement(child, { ref }, childPropsChildren);
-          let validation;
-          if (child.props.validation) {
-            validation = child.props.validation;
-            this.fieldRefs.push({ validation, ref, props: child.props, type: child.type });
-            return React.createElement('div', null,
-              newChild,
-              React.createElement(ValidationError, { invalid: this.state.invalidFields[child.props.name] }, null));
-              
-          }
-          this.fieldRefs.push({ validation, ref, props: child.props, type: child.type });
-          return newChild;
-
-        }
+        return this.addRefToField(child, childPropsChildren)
       } else if (child.type) {
         return React.cloneElement(child, {}, childPropsChildren);
       } else {
@@ -55,6 +35,29 @@ class EasyForm extends React.Component {
       }
     });
     return newChildren;
+  }
+
+  addRefToField(field, childPropsChildren) {
+    if (field.type === 'button') {
+      const onClick = this.submitForm.bind(this);
+      return React.cloneElement(field, { onClick }, childPropsChildren);
+    } else {
+      const ref = React.createRef();
+      const newChild = React.cloneElement(field, { ref }, childPropsChildren);
+      if (field.props.validation) {
+        return this.addValidationToField(newChild, ref);
+      }
+      this.fieldRefs.push({ ref, props: field.props, type: field.type });
+      return newChild;
+    }
+  }
+
+  addValidationToField(field, ref) {
+    let validation = field.props.validation;
+    this.fieldRefs.push({ validation, ref, props: field.props, type: field.type });
+    return React.createElement('div', null,
+      field,
+      React.createElement(ValidationError, { invalid: this.state.invalidFields[field.props.name] }, null));
   }
 
   componentWillUpdate() {
@@ -83,20 +86,20 @@ class EasyForm extends React.Component {
       this.props.onSubmit(formValues);
     }
   }
-  
+
   validate() {
     let valid = true;
     const invalidFields = {};
     this.fieldRefs.filter(field => {
       return Boolean(field.validation)
     }).forEach(field => {
-        if (!field.ref.current.value || field.ref.current.value.trim() === '') {
-          valid = false;
-          invalidFields[field.props.name] = true;
-        }
+      if (!field.ref.current.value || field.ref.current.value.trim() === '') {
+        valid = false;
+        invalidFields[field.props.name] = true;
+      }
     })
 
-    return {valid, invalidFields};
+    return { valid, invalidFields };
   }
   processSelect(element) {
     if (element.props.multiple) {
