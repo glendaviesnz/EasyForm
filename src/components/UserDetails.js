@@ -11,7 +11,7 @@ class UserDetails extends React.Component {
     return <EasyForm onSubmit={(data) => this.onSubmit(data)}>
       <label>
         First name
-        <input name="firstName" />
+        <input name="firstName" validate="true" />
       </label>
       <label>
         Last name
@@ -27,6 +27,7 @@ class UserDetails extends React.Component {
         <option value="mercedes">Mercedes</option>
         <option value="audi">Audi</option>
       </select>
+      <textarea name="bio"></textarea>
       <button type="submit">Submit</button>
     </EasyForm>;
   }
