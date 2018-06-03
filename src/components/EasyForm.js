@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ValidationError from './ValidationError';
+import { validationTypes } from './validations';
 
 class EasyForm extends React.Component {
   fieldRefs = []
@@ -9,6 +10,11 @@ class EasyForm extends React.Component {
   state = {
     invalid: false,
     invalidFields: {}
+  }
+  validationTypes;
+
+  componentWillMount() {
+    this.validationTypes = { ...validationTypes, ...this.props.validationTypes};
   }
 
   render() {
@@ -57,7 +63,10 @@ class EasyForm extends React.Component {
     this.fieldRefs.push({ validation, ref, props: field.props, type: field.type });
     return React.createElement('div', null,
       field,
-      React.createElement(ValidationError, { invalid: this.state.invalidFields[field.props.name] }, null));
+      React.createElement(ValidationError, { 
+        invalid: this.state.invalidFields[field.props.name],
+        message: this.validationTypes[validation].message
+      }, null));
   }
 
   componentWillUpdate() {
@@ -84,6 +93,7 @@ class EasyForm extends React.Component {
         }
       });
       this.props.onSubmit(formValues);
+      this.setState({ invalid: false, invalidFields: {} });
     }
   }
 
@@ -93,7 +103,7 @@ class EasyForm extends React.Component {
     this.fieldRefs.filter(field => {
       return Boolean(field.validation)
     }).forEach(field => {
-      if (!field.ref.current.value || field.ref.current.value.trim() === '') {
+      if (!this.validationTypes[field.validation].validate(field.ref.current.value)) {
         valid = false;
         invalidFields[field.props.name] = true;
       }
@@ -101,6 +111,7 @@ class EasyForm extends React.Component {
 
     return { valid, invalidFields };
   }
+
   processSelect(element) {
     if (element.props.multiple) {
       const selectedOptions = [...element.ref.current.options].filter((option) => {
@@ -113,28 +124,6 @@ class EasyForm extends React.Component {
       return element.ref.current.value;
     }
   }
-
-
-
-  // componentDidMount() {
-
-  //   this.fieldRefs.forEach((element) => {
-  //     const replay = new ReplaySubject(1);
-  //     fromEvent(element.ref.current, 'blur')
-  //       .pipe(startWith({ target: {} }),
-  //         map((data) => {
-  //           if (element.props.type === 'checkbox') {
-  //             return { name: element.props.name, value: data.target.checked };
-  //           } else {
-  //             return { name: element.props.name, value: data.target.value };
-  //           }
-  //         })
-  //       ).subscribe(replay);
-  //     this.fieldObservables.push(replay);
-  //   });
-
-  // }
-
 }
 
 export default EasyForm;

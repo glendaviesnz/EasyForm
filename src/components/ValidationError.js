@@ -1,14 +1,13 @@
 import React from 'react';
 
-class ValidationError extends React.Component {
-    render() {
-      return <div>
-        {this.props.invalid &&
-          <span>Field invalid</span>
-        }
-      </div>;
-    }
-  }
+const ValidationError = ({ invalid, message }) => {
+    return (
+        <div>
+            {invalid &&
+                <span>{message}</span>
+            }
+        </div>
+    );
+}
 
-  export default ValidationError;
-  
+export default ValidationError;

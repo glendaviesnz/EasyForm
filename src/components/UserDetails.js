@@ -8,14 +8,14 @@ class UserDetails extends React.Component {
     console.log(formData);
   }
   render() {
-    return <EasyForm onSubmit={(data) => this.onSubmit(data)}>
+    return <EasyForm onSubmit={(data) => this.onSubmit(data)} >
       <label>
         First name
         <input name="firstName" validation="required" />
       </label>
       <label>
-        Last name
-        <input name="lastName"  validation="required" />
+        Email
+        <input name="email"  validation='email' />
       </label>
       <input type="radio" name="relationship" value="sister" />
       <input type="radio" name="relationship" value="mum" />
