@@ -2,7 +2,7 @@
 
 No the world doesn't need another React form library!
 
-This is just a small library that I set up for some personal projects that allows forms to be set up using a very simple declaritive style using standard form elements, eg.
+This is just a small library that I created for some personal projects that allows forms to be set up using a very simple declaritive style using standard form elements, eg.
 
 ```javascript
 render() {
